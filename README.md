@@ -54,16 +54,19 @@ bash scripts/train_example.sh
 ### Model Training
 The scripts for training, inference, and testing the model are located in the `scripts/` folder. Example usage is shown below:
 
+By default, XPert uses the pre-trained HG drug embedding from `HG_data/saved_embedding/HG_drug_embeddings.npy`. To run the UniMol-only setting without HG drug embeddings, add `--wo_HG True` to the training, testing, or inference command.
+
 Run the following command to train XPert using the L1000 dataset (for predictions in multi-dose-multi-time mode, change the dataset suffix to `_mdmt`, e.g., `l1000_mdmt`). Set the `use_gradscaler` parameter to `True` to deploy flash attention for accelerating the attention computation.
 
-``` 
-python train_xpert.py --model XPert 
+```
+python train_xpert.py --model XPert
                       --config config_l1000
                       --drug_feat unimol
                       --nfold split_1
                       --dataset l1000_sdst
                       --use_gradscaler True
-``` 
+                      --wo_HG True
+```
 
 
 ### Model Finetuning
@@ -76,12 +79,13 @@ All trained models are available for download on [Figshare](URL to be updated af
 For cold-dose-time scenarios, use the following code:
 
 ```
-python train_xpert.py --model XPert 
-                      --config config_l1000_cdt 
+python train_xpert.py --model XPert
+                      --config config_l1000_cdt
                       --drug_feat unimol
                       --nfold split_cold_dose&time_random_1_one_shot
                       --dataset l1000_mdmt
                       --use_gradscaler True
+                      --wo_HG True
                       --pretrained_model saved_model/pretrain_mdmt_new.pth
 ```
 
@@ -93,6 +97,7 @@ python train_xpert.py --model XPert
                       --nfold split_breast_1
                       --dataset cdsdb_mdmt
                       --use_gradscaler True
+                      --wo_HG True
                       --pretrained_model saved_model/pretrain_mdmt_full_50_epoch.pth
 ```
 
@@ -110,8 +115,9 @@ python train_xpert.py --model XPert
                       --use_gradscaler True
                       --mode test
                       --output_profile True
+                      --wo_HG True
                       --saved_model_path saved_model/l1000_sdst_warm_split.pth
-``` 
+```
 
 If you need to extract `cls` embeddings or attention matrices for downstream analysis, we recommend running the model in `Infer` mode. Set the `output_cls_embed` and `output_attention` parameters accordingly. For step-by-step guidance on attention analysis, refer to the tutorials at `reproducing/fig3/fig3D_egfr_attn_molecule.ipynb` and `reproducing/fig6/Fig6G_differential_atttention_analysis.ipynb`. These notebooks provide reproducible examples of how to interpret attention outputs.
 
@@ -125,8 +131,9 @@ python train_xpert.py --model XPert
                       --mode infer
                       --output_cls_embed True
                       --output_attention True
+                      --wo_HG True
                       --saved_model_path saved_model/l1000_sdst_warm_split.pth
-``` 
+```
 
 
 
